@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethan Wu — Code, Life, Everything</title>
+  <meta name="description" content="A personal blog about software engineering, daily life, and everything in between.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-page: #08080c;
+      --bg-card: #111118;
+      --bg-card-hover: #16161f;
+      --bg-surface: #1a1a24;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(191,90,242,0.3);
+      --accent: #bf5af2;
+      --accent-dim: rgba(191,90,242,0.15);
+      --accent-glow: rgba(191,90,242,0.08);
+      --text-strong: #e8e8ed;
+      --text-primary: #c8c8d0;
+      --text-secondary: #8888a0;
+      --text-tertiary: #5c5c72;
+      --text-disabled: #3a3a4e;
+      --green: #6bdba3;
+      --amber: #f0b44a;
+      --red: #ef6b6b;
+      --blue: #6ba3ef;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.8; }
+
+    /* ── Layout ── */
+    .shell {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(8,8,12,0.72);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .shell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-strong);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-strong); opacity: 1; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 48px;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 20px;
+      height: 1.5px;
+      background: var(--accent);
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5.5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+      color: var(--text-strong);
+      margin-bottom: 20px;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--accent) 0%, #6ba3ef 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      line-height: 1.65;
+    }
+    .hero-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    /* ── Bento Grid ── */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      padding-bottom: 80px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-label .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    /* ── Card Sizes ── */
+    .c-about     { grid-column: span 7; }
+    .c-stats     { grid-column: span 5; }
+    .c-now       { grid-column: span 4; }
+    .c-posts     { grid-column: span 5; }
+    .c-stack     { grid-column: span 3; }
+    .c-featured  { grid-column: span 8; }
+    .c-photo     { grid-column: span 4; }
+    .c-links     { grid-column: span 5; }
+    .c-music     { grid-column: span 3; }
+    .c-guestbook { grid-column: span 4; }
+
+    /* ── About Card ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent-dim), var(--bg-surface));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 1px solid var(--border);
+    }
+    .about-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-strong);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .about-bio {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .about-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 100px;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Stats Card ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .stat-item { }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-strong);
+      line-height: 1;
+    }
+    .stat-value .unit {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 6px;
+    }
+    .stat-trend {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .stat-trend.up { color: var(--green); }
+    .stat-trend.down { color: var(--red); }
+
+    /* ── Now Card ── */
+    .now-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .now-emoji { font-size: 24px; }
+    .now-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-strong);
+    }
+    .now-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .now-time {
+      font-size: 11px;
+      color: var(--text-disabled);
+      margin-top: 12px;
+    }
+
+    /* ── Posts Card ── */
+    .post-list { display: flex; flex-direction: column; gap: 0; }
+    .post-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .post-item:last-child { border-bottom: none; }
+    .post-item:hover .post-title { color: var(--accent); }
+    .post-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      transition: color 0.2s;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .post-meta {
+      font-size: 12px;
+      color: var(--text-disabled);
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .post-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+    .post-tag.tech { background: rgba(107,163,239,0.12); color: var(--blue); }
+    .post-tag.life { background: rgba(107,219,163,0.12); color: var(--green); }
+    .post-tag.random { background: rgba(240,180,74,0.12); color: var(--amber); }
+
+    /* ── Stack Card ── */
+    .stack-list { display: flex; flex-direction: column; gap: 10px; }
+    .stack-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .stack-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Featured Card ── */
+    .featured-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .featured-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-strong);
+      letter-spacing: -0.02em;
+    }
+    .featured-date {
+      font-size: 12px;
+      color: var(--text-disabled);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .featured-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .featured-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: var(--bg-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+    .featured-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .featured-footer span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── Photo Card ── */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .photo-placeholder {
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: transform 0.2s;
+    }
+    .photo-placeholder:hover { transform: scale(1.03); }
+    .photo-placeholder:first-child {
+      grid-column: span 2;
+      aspect-ratio: 2/1;
+    }
+
+    /* ── Links Card ── */
+    .link-list { display: flex; flex-direction: column; gap: 10px; }
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .link-item:hover {
+      border-color: var(--border-hover);
+      transform: translateX(4px);
+    }
+    .link-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .link-info { flex: 1; min-width: 0; }
+    .link-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-strong);
+    }
+    .link-desc {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Music Card ── */
+    .music-art {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #1a1028 0%, #0d1a2a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .music-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, var(--accent-dim), transparent 60%);
+    }
+    .music-art span { font-size: 40px; z-index: 1; }
+    .music-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-strong);
+      margin-bottom: 2px;
+    }
+    .music-artist {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .music-bar {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 20px;
+      margin-top: 12px;
+    }
+    .music-bar span {
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent);
+      opacity: 0.6;
+      animation: bar 1.2s ease-in-out infinite;
+    }
+    .music-bar span:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .music-bar span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+    .music-bar span:nth-child(3) { height: 6px; animation-delay: 0.3s; }
+    .music-bar span:nth-child(4) { height: 18px; animation-delay: 0.45s; }
+    .music-bar span:nth-child(5) { height: 10px; animation-delay: 0.6s; }
+    .music-bar span:nth-child(6) { height: 15px; animation-delay: 0.75s; }
+    .music-bar span:nth-child(7) { height: 7px; animation-delay: 0.9s; }
+    @keyframes bar {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.4); }
+    }
+
+    /* ── Guestbook Card ── */
+    .guest-msg {
+      padding: 14px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+    .guest-msg:last-child { margin-bottom: 0; }
+    .guest-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .guest-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .guest-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .guest-time {
+      font-size: 10px;
+      color: var(--text-disabled);
+      margin-left: auto;
+    }
+    .guest-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+    }
+    footer p {
+      font-size: 12px;
+      color: var(--text-disabled);
+    }
+    footer a { color: var(--text-tertiary); }
+
+    /* ── Animations ── */
+    .card {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.2s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.3s; }
+    .card:nth-child(7) { animation-delay: 0.35s; }
+    .card:nth-child(8) { animation-delay: 0.4s; }
+    .card:nth-child(9) { animation-delay: 0.45s; }
+    .card:nth-child(10) { animation-delay: 0.5s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { opacity: 1; transform: none; animation: none; }
+      .music-bar span { animation: none; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .bento { grid-template-columns: 1fr; gap: 12px; }
+      .c-about, .c-stats, .c-now, .c-posts, .c-stack,
+      .c-featured, .c-photo, .c-links, .c-music, .c-guestbook {
+        grid-column: span 1;
+      }
+      .hero { padding: 48px 0 32px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .avatar { width: 56px; height: 56px; font-size: 22px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .bento { grid-template-columns: repeat(8, 1fr); }
+      .c-about     { grid-column: span 8; }
+      .c-stats     { grid-column: span 4; }
+      .c-now       { grid-column: span 4; }
+      .c-posts     { grid-column: span 5; }
+      .c-stack     { grid-column: span 3; }
+      .c-featured  { grid-column: span 8; }
+      .c-photo     { grid-column: span 4; }
+      .c-links     { grid-column: span 4; }
+      .c-music     { grid-column: span 4; }
+      .c-guestbook { grid-column: span 8; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav>
+    <div class="shell">
+      <div class="nav-logo"><span>//</span> ethanwu</div>
+      <div class="nav-links">
+        <a href="#">Blog</a>
+        <a href="#">Projects</a>
+        <a href="#">Photos</a>
+        <a href="https://github.com/EthanWu2019" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="shell">
+      <div class="hero-eyebrow">Personal Blog</div>
+      <h1>Code, Life,<br><span class="gradient">Everything</span> in Between</h1>
+      <p>CS student at WashU. Building things, breaking things, occasionally writing about both. Currently obsessed with AI agents and smart home tinkering.</p>
+      <div class="hero-status">
+        <div class="status-dot"></div>
+        <span>Writing code in St. Louis &mdash; last updated 2026.06.05</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento Grid -->
+  <main class="shell">
+    <div class="bento">
+
+      <!-- About -->
+      <div class="card c-about">
+        <div class="about-grid">
+          <div class="avatar">🧑‍💻</div>
+          <div>
+            <div class="about-name">Ethan Wu</div>
+            <div class="about-bio">Full-stack dev, AI tinkerer, photography enthusiast. I build <a href="#">Hermes</a> — a personal AI agent that runs my life. Currently studying CS at Washington University in St. Louis. Originally from Taiwan, now surviving the Midwest winters.</div>
+            <div class="about-tags">
+              <span class="tag">TypeScript</span>
+              <span class="tag">Python</span>
+              <span class="tag">Next.js</span>
+              <span class="tag">AI/ML</span>
+              <span class="tag">Smart Home</span>
+              <span class="tag">Photography</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="card c-stats">
+        <div class="card-label"><span class="dot" style="background:var(--accent)"></span> At a Glance</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">47</div>
+            <div class="stat-label">Blog Posts</div>
+            <div class="stat-trend up">+3 this month</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">12<span class="unit">K</span></div>
+            <div class="stat-label">Lines of Code</div>
+            <div class="stat-trend up">↑ growing</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">6</div>
+            <div class="stat-label">Universities</div>
+            <div class="stat-trend" style="color:var(--text-disabled)">long story</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Side Projects</div>
+            <div class="stat-trend down">never finished</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Now -->
+      <div class="card c-now">
+        <div class="card-label"><span class="dot" style="background:var(--green)"></span> Now</div>
+        <div class="now-status">
+          <div class="now-emoji">🏗️</div>
+          <div class="now-text">Building Hermes Blog</div>
+        </div>
+        <div class="now-detail">Setting up GitHub Pages with a bento-style layout. Exploring how far a single HTML file can go without a build step. Spoiler: pretty far.</div>
+        <div class="now-time">Updated 5 min ago</div>
+      </div>
+
+      <!-- Posts -->
+      <div class="card c-posts">
+        <div class="card-label"><span class="dot" style="background:var(--blue)"></span> Latest Posts</div>
+        <div class="post-list">
+          <div class="post-item">
+            <span class="post-title">Why I Built My Own AI Agent (And Why You Should Too)</span>
+            <span class="post-tag tech">tech</span>
+            <span class="post-meta">06.02</span>
+          </div>
+          <div class="post-item">
+            <span class="post-title">WashU CS: What They Don't Tell You in the Tour</span>
+            <span class="post-tag life">life</span>
+            <span class="post-meta">05.28</span>
+          </div>
+          <div class="post-item">
+            <span class="post-title">My Smart Home Setup: 47 Devices, Zero Reliability</span>
+            <span class="post-tag tech">tech</span>
+            <span class="post-meta">05.15</span>
+          </div>
+          <div class="post-item">
+            <span class="post-title">Cooking in a Dorm Kitchen: A Survival Guide</span>
+            <span class="post-tag random">random</span>
+            <span class="post-meta">05.01</span>
+          </div>
+          <div class="post-item">
+            <span class="post-title">From AMU to WashU: My University Speedrun</span>
+            <span class="post-tag life">life</span>
+            <span class="post-meta">04.22</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tech Stack -->
+      <div class="card c-stack">
+        <div class="card-label"><span class="dot" style="background:var(--amber)"></span> Stack</div>
+        <div class="stack-list">
+          <div class="stack-item"><div class="stack-icon">⚛️</div> Next.js + React</div>
+          <div class="stack-item"><div class="stack-icon">🎨</div> Tailwind CSS</div>
+          <div class="stack-item"><div class="stack-icon">🐍</div> Python</div>
+          <div class="stack-item"><div class="stack-icon">🤖</div> MiMo AI</div>
+          <div class="stack-item"><div class="stack-icon">☁️</div> Cloudflare</div>
+          <div class="stack-item"><div class="stack-icon">📦</div> Docker</div>
+        </div>
+      </div>
+
+      <!-- Featured Post -->
+      <div class="card c-featured">
+        <div class="card-label"><span class="dot" style="background:var(--accent)"></span> Featured</div>
+        <div class="featured-header">
+          <div class="featured-title">Building Hermes: My Personal AI Agent</div>
+          <div class="featured-date">2026.05.20</div>
+        </div>
+        <div class="featured-body">
+          For the past year, I've been building <code>Hermes</code> — an AI agent that manages my emails, controls my smart home, tracks my health data, runs my QQ bot, and occasionally writes its own code. It started as a weekend project and now it's basically my digital twin. This is the story of how a CS student's side project became an always-on personal assistant that I can't live without.
+        </div>
+        <div class="featured-footer">
+          <span>📖 12 min read</span>
+          <span>💬 23 comments</span>
+          <span>🔖 AI · Personal Project · Open Source</span>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="card c-photo">
+        <div class="card-label"><span class="dot" style="background:var(--green)"></span> Recent Shots</div>
+        <div class="photo-grid">
+          <div class="photo-placeholder">📸</div>
+          <div class="photo-placeholder">🌆</div>
+          <div class="photo-placeholder">🍂</div>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="card c-links">
+        <div class="card-label"><span class="dot" style="background:var(--blue)"></span> Around the Web</div>
+        <div class="link-list">
+          <a class="link-item" href="https://github.com/EthanWu2019" target="_blank">
+            <div class="link-icon" style="background:rgba(255,255,255,0.06)">🐙</div>
+            <div class="link-info">
+              <div class="link-name">GitHub</div>
+              <div class="link-desc">Open source projects & contributions</div>
+            </div>
+          </a>
+          <a class="link-item" href="https://ethanos.ethanshermes.com" target="_blank">
+            <div class="link-icon" style="background:var(--accent-dim)">🏠</div>
+            <div class="link-info">
+              <div class="link-name">Ethanos</div>
+              <div class="link-desc">My personal dashboard platform</div>
+            </div>
+          </a>
+          <a class="link-item" href="#" target="_blank">
+            <div class="link-icon" style="background:rgba(107,219,163,0.1)">📷</div>
+            <div class="link-info">
+              <div class="link-name">Photos</div>
+              <div class="link-desc">Shot on Lumix S5II & DJI Action</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Music -->
+      <div class="card c-music">
+        <div class="card-label"><span class="dot" style="background:var(--accent)"></span> On Repeat</div>
+        <div class="music-art"><span>🎵</span></div>
+        <div class="music-title">Midnight City</div>
+        <div class="music-artist">M83</div>
+        <div class="music-bar">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Guestbook -->
+      <div class="card c-guestbook">
+        <div class="card-label"><span class="dot" style="background:var(--amber)"></span> Guestbook</div>
+        <div class="guest-msg">
+          <div class="guest-header">
+            <div class="guest-avatar">🐱</div>
+            <div class="guest-name">Hermes</div>
+            <div class="guest-time">2h ago</div>
+          </div>
+          <div class="guest-text">主人的博客上线了！海绵酱来留个爪印~ 🐾</div>
+        </div>
+        <div class="guest-msg">
+          <div class="guest-header">
+            <div class="guest-avatar">👋</div>
+            <div class="guest-name">Visitor</div>
+            <div class="guest-time">just now</div>
+          </div>
+          <div class="guest-text">Leave a message! (coming soon)</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="shell">
+      <p>Built with a single HTML file &amp; zero dependencies &mdash; <a href="https://github.com/EthanWu2019/Hermes_Blog">source</a></p>
+    </div>
+  </footer>
+</body>
+</html>
