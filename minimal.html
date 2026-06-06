@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethan Wu — Notes on Tech & Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #fafafa;
+  --text: #1a1a1a;
+  --text-2: #3d3d3d;
+  --text-3: #6b6b6b;
+  --text-4: #999;
+  --text-5: #b8b8b8;
+  --accent: #bf5af2;
+  --accent-light: rgba(191, 90, 242, 0.08);
+  --border: #e8e8e8;
+  --max-w: 640px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 5-level hierarchy */
+h1 { font-family: 'Lora', Georgia, serif; font-size: 2.8rem; font-weight: 600; line-height: 1.2; color: var(--text); letter-spacing: -0.03em; }
+h2 { font-family: 'Lora', Georgia, serif; font-size: 1.6rem; font-weight: 600; line-height: 1.35; color: var(--text); letter-spacing: -0.02em; }
+h3 { font-size: 1.15rem; font-weight: 600; line-height: 1.5; color: var(--text-2); }
+h4 { font-size: 0.85rem; font-weight: 600; line-height: 1.6; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em; }
+p, .body-text { font-size: 1rem; color: var(--text-2); line-height: 1.8; }
+.caption { font-size: 0.85rem; color: var(--text-3); line-height: 1.6; }
+
+a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+a:hover { opacity: 0.7; }
+
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+
+/* Nav */
+nav {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(250,250,250,0.85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; max-width: 800px;
+}
+.nav-logo { font-weight: 600; font-size: 0.95rem; color: var(--text); letter-spacing: -0.01em; }
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-links a { font-size: 0.85rem; color: var(--text-3); font-weight: 400; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); opacity: 1; }
+.nav-links a.active { color: var(--accent); }
+.nav-sep { width: 1px; height: 16px; background: var(--border); }
+
+/* Hero */
+.hero { padding: 6rem 0 4rem; animation: fadeUp 0.8s ease both; }
+.hero h1 { margin-bottom: 1rem; }
+.hero .tagline { font-family: 'Lora', Georgia, serif; font-size: 1.15rem; color: var(--text-3); font-style: italic; margin-bottom: 2rem; max-width: 480px; }
+.hero .meta-line { font-size: 0.85rem; color: var(--text-4); display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.hero .meta-line span { display: flex; align-items: center; gap: 0.35rem; }
+
+/* Section */
+section { padding: 3rem 0; }
+.section-label { margin-bottom: 2rem; }
+
+/* Posts */
+.post { padding: 2rem 0; border-bottom: 1px solid var(--border); animation: fadeUp 0.6s ease both; }
+.post:last-child { border-bottom: none; }
+.post-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.post-date { font-size: 0.8rem; color: var(--text-4); }
+.post-tag {
+  font-size: 0.72rem; font-weight: 500; color: var(--accent);
+  background: var(--accent-light); padding: 0.15rem 0.55rem;
+  border-radius: 3px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.post h2 { margin-bottom: 0.6rem; cursor: pointer; transition: color 0.2s; }
+.post h2:hover { color: var(--accent); }
+.post p { font-size: 0.95rem; color: var(--text-3); max-width: 540px; }
+.post .read-more { font-size: 0.85rem; font-weight: 500; margin-top: 0.75rem; display: inline-block; }
+
+/* About */
+.about-section { padding: 4rem 0; border-top: 1px solid var(--border); animation: fadeUp 0.7s ease both; }
+.about-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.about-text p { margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-2); }
+.about-text p:last-child { margin-bottom: 0; }
+.about-details { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.about-item { }
+.about-item .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-4); margin-bottom: 0.25rem; }
+.about-item .value { font-size: 0.9rem; color: var(--text-2); }
+
+/* Footer */
+footer {
+  padding: 3rem 0; border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer p { font-size: 0.8rem; color: var(--text-5); }
+footer .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 0.75rem; }
+footer .footer-links a { font-size: 0.8rem; color: var(--text-4); }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.post:nth-child(1) { animation-delay: 0.1s; }
+.post:nth-child(2) { animation-delay: 0.2s; }
+.post:nth-child(3) { animation-delay: 0.3s; }
+.post:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.35rem; }
+  .hero { padding: 4rem 0 2.5rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links .nav-sep { display: none; }
+  .nav-links .style-link { display: none; }
+}
+
+/* Divider */
+.divider { width: 40px; height: 1px; background: var(--text-5); margin: 3rem 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-logo">Ethan<span>.</span></div>
+    <div class="nav-links">
+      <a href="#" class="active">Blog</a>
+      <a href="#">Projects</a>
+      <a href="#">Photos</a>
+      <a href="#">GitHub</a>
+      <span class="nav-sep"></span>
+      <a href="/index.html" class="style-link" style="font-size:0.78rem;color:var(--text-5)">Bento</a>
+      <a href="/magazine.html" class="style-link" style="font-size:0.78rem;color:var(--text-5)">Magazine</a>
+      <a href="/dev.html" class="style-link" style="font-size:0.78rem;color:var(--text-5)">Dev</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="hero">
+    <h1>Ethan Wu</h1>
+    <p class="tagline">Writing about AI agents, smart homes, and the quiet beauty of everyday things.</p>
+    <div class="meta-line">
+      <span>🎓 CS @ WashU</span>
+      <span>🇹🇼 Taiwan</span>
+      <span>📷 Photography</span>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <section>
+    <h4 class="section-label">Writing</h4>
+
+    <article class="post">
+      <div class="post-meta">
+        <span class="post-date">May 18, 2026</span>
+        <span class="post-tag">AI</span>
+      </div>
+      <h2>Building Hermes: What I Learned Making an AI Agent That Actually Works</h2>
+      <p>Most AI agent demos fall apart the moment you leave the script. I wanted something different — an agent that handles messy, real-world tasks with grace. Here's the architecture, the failures, and the one insight that changed everything.</p>
+      <a href="#" class="read-more">Read →</a>
+    </article>
+
+    <article class="post">
+      <div class="post-meta">
+        <span class="post-date">Apr 22, 2026</span>
+        <span class="post-tag">Smart Home</span>
+      </div>
+      <h2>My Apartment Is Smarter Than Me: A Practical Smart Home Setup</h2>
+      <p>After two years of tinkering with Home Assistant, Zigbee sensors, and far too many automations, I've landed on a setup that just works. No cloud dependencies, no flaky voice commands — just lights that know when I'm home.</p>
+      <a href="#" class="read-more">Read →</a>
+    </article>
+
+    <article class="post">
+      <div class="post-meta">
+        <span class="post-date">Mar 10, 2026</span>
+        <span class="post-tag">Life</span>
+      </div>
+      <h2>Things They Don't Tell You About University</h2>
+      <p>The lectures are fine. It's the 2 a.m. conversations in the common room, the dining hall meals that turn into philosophy debates, and the slow realization that you're becoming someone new — that's the real education.</p>
+      <a href="#" class="read-more">Read →</a>
+    </article>
+
+    <article class="post">
+      <div class="post-meta">
+        <span class="post-date">Feb 5, 2026</span>
+        <span class="post-tag">Cooking</span>
+      </div>
+      <h2>A Taiwanese Student's Guide to Cooking Away from Home</h2>
+      <p>When you grow up with your grandmother's braised pork rice, every meal abroad feels like a compromise. So I started recreating the flavors I missed — and discovered that cooking is just another form of debugging.</p>
+      <a href="#" class="read-more">Read →</a>
+    </article>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="about-section">
+    <h4 class="section-label">About</h4>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Hi, I'm Ethan — a computer science student at Washington University in St. Louis, originally from Taiwan. I spend most of my time building <a href="#">Hermes</a>, an AI agent framework, and most of my free time behind a camera lens.</p>
+        <p>I believe in writing code that's honest and writing words that are clear. This blog is where I share both: technical deep-dives on AI and smart home systems, alongside the quieter moments of life as a student abroad.</p>
+      </div>
+      <div class="about-details">
+        <div class="about-item">
+          <div class="label">Location</div>
+          <div class="value">St. Louis, MO / Taiwan</div>
+        </div>
+        <div class="about-item">
+          <div class="label">Focus</div>
+          <div class="value">AI Agents, Systems</div>
+        </div>
+        <div class="about-item">
+          <div class="label">Hobbies</div>
+          <div class="value">Photography, Cooking</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>Built with a single HTML file</p>
+    <div class="footer-links">
+      <a href="#">GitHub</a>
+      <a href="#">Twitter</a>
+      <a href="#">Email</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

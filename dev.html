@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ethanwu --blog</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
+  --fg:#e6edf3;--fg2:#8b949e;--fg3:#484f58;
+  --purple:#bf5af2;--purple-dim:rgba(191,90,242,.12);--purple-glow:rgba(191,90,242,.25);
+  --green:#6bdba3;--green-dim:rgba(107,219,163,.12);
+  --yellow:#e3b341;--blue:#58a6ff;--red:#f85149;
+  --border:#30363d;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:'Inter','Segoe UI',system-ui,sans-serif;
+  font-size:15px;line-height:1.6;
+  min-height:100vh;position:relative;overflow-x:hidden;
+}
+/* subtle grid bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(191,90,242,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(191,90,242,.015) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+/* subtle scanline */
+body::after{
+  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);
+}
+.container{max-width:900px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* ===== NAV ===== */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,17,23,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:13px;
+}
+nav .container{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav-label{color:var(--fg3);margin-right:4px}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap}
+.nav-links a{
+  color:var(--fg2);text-decoration:none;padding:4px 10px;border-radius:4px;
+  transition:all .2s;
+}
+.nav-links a:hover{color:var(--fg);background:var(--bg3)}
+.nav-links a.active{color:var(--purple);background:var(--purple-dim)}
+.nav-right{margin-left:auto;color:var(--fg3);font-size:12px}
+
+/* ===== HERO / TERMINAL ===== */
+.hero{
+  padding:80px 0 60px;
+  animation:fadeUp .6s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+
+.terminal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;
+}
+.terminal-bar{
+  display:flex;align-items:center;gap:8px;padding:12px 16px;
+  background:var(--bg3);border-bottom:1px solid var(--border);
+}
+.terminal-dots{display:flex;gap:6px}
+.terminal-dots span{width:12px;height:12px;border-radius:50%}
+.terminal-dots span:nth-child(1){background:#f85149}
+.terminal-dots span:nth-child(2){background:#e3b341}
+.terminal-dots span:nth-child(3){background:#6bdba3}
+.terminal-title{color:var(--fg2);font-size:12px;font-family:'JetBrains Mono',monospace;margin-left:8px}
+.terminal-body{padding:24px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.8}
+.terminal-body .prompt{color:var(--fg2)}
+.terminal-body .cmd{color:var(--fg)}
+.terminal-body .flag{color:var(--purple)}
+.terminal-body .cursor{
+  display:inline-block;width:8px;height:18px;background:var(--purple);
+  vertical-align:text-bottom;animation:blink 1s step-end infinite;
+  margin-left:2px;
+}
+.terminal-output{color:var(--green);margin-top:8px}
+.terminal-output .comment{color:var(--fg3)}
+.hero-sub{
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--fg2);
+  margin-top:16px;padding-left:4px;
+}
+.hero-sub .tag{color:var(--purple)}
+
+/* ===== STATUS BAR ===== */
+.status-bar{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 16px;margin-bottom:48px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fg2);
+  display:flex;gap:20px;flex-wrap:wrap;
+  animation:fadeUp .6s ease .15s both;
+}
+.status-bar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.status-bar .dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-bar .dot.purple{background:var(--purple)}
+
+/* ===== SECTION HEADERS ===== */
+.section-head{
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--fg3);
+  margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.section-head .hl{color:var(--purple)}
+
+/* ===== ABOUT / CODE BLOCK ===== */
+.about{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:48px;overflow:hidden;
+  animation:fadeUp .6s ease .25s both;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fg3);
+}
+.about-body{
+  padding:20px 24px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;
+}
+.about-body .ln{color:var(--fg3);user-select:none;margin-right:16px}
+.about-body .key{color:var(--purple)}
+.about-body .str{color:var(--green)}
+.about-body .type{color:var(--yellow)}
+.about-body .comment{color:var(--fg3)}
+
+/* ===== STATS (CLI OUTPUT) ===== */
+.stats{
+  margin-bottom:48px;
+  animation:fadeUp .6s ease .35s both;
+}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;
+}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:16px 20px;font-family:'JetBrains Mono',monospace;
+  transition:border-color .2s,transform .2s;
+}
+.stat-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.stat-label{font-size:11px;color:var(--fg3);text-transform:uppercase;letter-spacing:1px}
+.stat-value{font-size:28px;font-weight:700;color:var(--fg);margin-top:4px}
+.stat-value .unit{font-size:13px;color:var(--fg2);font-weight:400;margin-left:4px}
+.stat-prefix{color:var(--green);font-size:12px;margin-bottom:4px}
+
+/* ===== BLOG / GIT LOG ===== */
+.blog{
+  margin-bottom:48px;
+  animation:fadeUp .6s ease .4s both;
+}
+.git-log{display:flex;flex-direction:column;gap:8px}
+.git-entry{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:16px 20px;font-family:'JetBrains Mono',monospace;
+  display:flex;gap:16px;align-items:flex-start;
+  transition:border-color .2s,transform .2s;cursor:pointer;
+}
+.git-entry:hover{border-color:var(--purple);transform:translateX(4px)}
+.git-hash{color:var(--purple);font-size:12px;white-space:nowrap;min-width:72px}
+.git-meta{display:flex;flex-direction:column;gap:4px;flex:1}
+.git-msg{color:var(--fg);font-size:14px;font-weight:500}
+.git-msg .tag{
+  display:inline-block;padding:1px 8px;border-radius:4px;font-size:11px;
+  margin-left:8px;font-weight:400;
+}
+.git-msg .tag.ai{background:var(--purple-dim);color:var(--purple)}
+.git-msg .tag.hw{background:var(--green-dim);color:var(--green)}
+.git-msg .tag.life{background:rgba(227,179,65,.12);color:var(--yellow)}
+.git-msg .tag.meta{background:rgba(88,166,255,.12);color:var(--blue)}
+.git-detail{font-size:12px;color:var(--fg2)}
+.git-date{font-size:11px;color:var(--fg3);white-space:nowrap}
+
+/* ===== TECH STACK ===== */
+.tech{
+  margin-bottom:48px;
+  animation:fadeUp .6s ease .5s both;
+}
+.tech-block{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;
+}
+.tech-body{
+  padding:20px 24px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2;
+}
+.tech-body .key{color:var(--purple)}
+.tech-body .str{color:var(--green)}
+.tech-body .bracket{color:var(--fg3)}
+
+/* ===== FOOTER ===== */
+footer{
+  text-align:center;padding:40px 0;
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--fg3);
+  border-top:1px solid var(--border);
+  animation:fadeUp .6s ease .6s both;
+}
+footer .slash{color:var(--fg3)}
+footer .heart{color:var(--red)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+  .hero{padding:48px 0 40px}
+  .terminal-body{font-size:12px;padding:16px}
+  .about-body{font-size:12px;padding:16px}
+  .git-entry{flex-direction:column;gap:8px}
+  .git-date{align-self:flex-end}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .status-bar{font-size:11px;gap:12px;padding:8px 12px}
+  .nav-right{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <span class="nav-label">ew@blog ~ %</span>
+    <div class="nav-links">
+      <a href="/index.html">[bento]</a>
+      <a href="/magazine.html">[magazine]</a>
+      <a href="/dev.html" class="active">[dev]</a>
+      <a href="/minimal.html">[minimal]</a>
+    </div>
+    <span class="nav-right">theme: catppuccin-mocha</span>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dots"><span></span><span></span><span></span></div>
+        <span class="terminal-title">ethan@hermes ~ zsh</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">~ $</span> <span class="cmd">ethanwu <span class="flag">--blog</span></span><span class="cursor"></span></div>
+        <div class="terminal-output">
+          <div><span class="comment"># initializing blog...</span></div>
+          <div>✓ loaded <span style="color:var(--purple)">5 posts</span> from ~/thoughts</div>
+          <div>✓ theme: <span style="color:var(--purple)">developer</span></div>
+          <div>✓ status: <span style="color:var(--green)">building cool things</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="hero-sub"><span class="tag">#</span> Ethan Wu — CS @ WashU · builder · <span class="tag">Hermes</span> architect</p>
+  </section>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span><span class="dot green"></span>system: online</span>
+    <span><span class="dot purple"></span>project: hermes-agent v2.5</span>
+    <span>uptime: 42 days</span>
+    <span>coffee: ∞</span>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <div class="code-header">
+      <span>about.ts</span>
+      <span>TypeScript</span>
+    </div>
+    <div class="about-body">
+      <div><span class="ln"> 1</span><span class="comment">// whoami</span></div>
+      <div><span class="ln"> 2</span><span class="key">interface</span> <span class="type">Developer</span> {</div>
+      <div><span class="ln"> 3</span>  <span class="key">name</span>: <span class="str">"Ethan Wu"</span>;</div>
+      <div><span class="ln"> 4</span>  <span class="key">location</span>: <span class="str">"Taiwan → St. Louis"</span>;</div>
+      <div><span class="ln"> 5</span>  <span class="key">education</span>: <span class="str">"CS @ WashU"</span>;</div>
+      <div><span class="ln"> 6</span>  <span class="key">currentProject</span>: <span class="str">"Hermes Agent"</span>;</div>
+      <div><span class="ln"> 7</span>  <span class="key">interests</span>: [</div>
+      <div><span class="ln"> 8</span>    <span class="str">"AI agents"</span>, <span class="str">"smart home"</span>,</div>
+      <div><span class="ln"> 9</span>    <span class="str">"photography"</span>, <span class="str">"cooking"</span>,</div>
+      <div><span class="ln">10</span>    <span class="str">"building things from scratch"</span></div>
+      <div><span class="ln">11</span>  ];</div>
+      <div><span class="ln">12</span>}</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="section-head"><span class="hl">$</span> cat ~/.stats</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-prefix">repos</div>
+        <div class="stat-value">24<span class="unit">active</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-prefix">commits</div>
+        <div class="stat-value">1.2k<span class="unit">this year</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-prefix">lines</div>
+        <div class="stat-value">89k<span class="unit">written</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-prefix">bugs</div>
+        <div class="stat-value">0<span class="unit">*maybe</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG / GIT LOG -->
+  <section class="blog">
+    <div class="section-head"><span class="hl">$</span> git log --oneline --recent</div>
+    <div class="git-log">
+      <div class="git-entry">
+        <span class="git-hash">a3f7c2d</span>
+        <div class="git-meta">
+          <div class="git-msg">Building AI Agents That Actually Work <span class="tag ai">AI</span></div>
+          <div class="git-detail">Lessons from building Hermes — tool use, memory, and the art of delegation</div>
+        </div>
+        <span class="git-date">2 days ago</span>
+      </div>
+      <div class="git-entry">
+        <span class="git-hash">b8e1f90</span>
+        <div class="git-meta">
+          <div class="git-msg">My Smart Home is Smarter Than Me <span class="tag hw">hardware</span></div>
+          <div class="git-detail">A deep dive into Home Assistant, automations, and why I have 47 sensors</div>
+        </div>
+        <span class="git-date">1 week ago</span>
+      </div>
+      <div class="git-entry">
+        <span class="git-hash">c5d2a18</span>
+        <div class="git-meta">
+          <div class="git-msg">Surviving CS at WashU: A Field Guide <span class="tag life">life</span></div>
+          <div class="git-detail">Study tips, prof recommendations, and why Olin Library is your best friend</div>
+        </div>
+        <span class="git-date">2 weeks ago</span>
+      </div>
+      <div class="git-entry">
+        <span class="git-hash">d9e4b73</span>
+        <div class="git-meta">
+          <div class="git-msg">Taiwanese Cooking for the Terminally Online <span class="tag life">life</span></div>
+          <div class="git-detail">Recipes, techniques, and the 3AM beef noodle soup that powers all-nighters</div>
+        </div>
+        <span class="git-date">3 weeks ago</span>
+      </div>
+      <div class="git-entry">
+        <span class="git-hash">e2f8c05</span>
+        <div class="git-meta">
+          <div class="git-msg">Introducing Hermes: An Open-Source AI Agent <span class="tag meta">meta</span></div>
+          <div class="git-detail">Why I built it, how it works, and what's next for autonomous agents</div>
+        </div>
+        <span class="git-date">1 month ago</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="tech">
+    <div class="section-head"><span class="hl">$</span> cat ~/.stack</div>
+    <div class="tech-block">
+      <div class="code-header">
+        <span>stack.json</span>
+        <span>JSON</span>
+      </div>
+      <div class="tech-body">
+        <div>{</div>
+        <div>  <span class="key">"languages"</span>: <span class="bracket">[</span><span class="str">"Python"</span>, <span class="str">"TypeScript"</span>, <span class="str">"Swift"</span><span class="bracket">]</span>,</div>
+        <div>  <span class="key">"frameworks"</span>: <span class="bracket">[</span><span class="str">"React"</span>, <span class="str">"Next.js"</span>, <span class="str">"FastAPI"</span><span class="bracket">]</span>,</div>
+        <div>  <span class="key">"ai"</span>: <span class="bracket">[</span><span class="str">"LLMs"</span>, <span class="str">"RAG"</span>, <span class="str">"Agents"</span>, <span class="str">"Fine-tuning"</span><span class="bracket">]</span>,</div>
+        <div>  <span class="key">"infra"</span>: <span class="bracket">[</span><span class="str">"Docker"</span>, <span class="str">"Home Assistant"</span>, <span class="str">"Linux"</span><span class="bracket">]</span>,</div>
+        <div>  <span class="key">"tools"</span>: <span class="bracket">[</span><span class="str">"Neovim"</span>, <span class="str">"Git"</span>, <span class="str">"Raycast"</span><span class="bracket">]</span>,</div>
+        <div>  <span class="key">"fun"</span>: <span class="bracket">[</span><span class="str">"Photography"</span>, <span class="str">"Mechanical keyboards"</span><span class="bracket">]</span></div>
+        <div>}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="slash">// </span>built with love <span class="heart">♥</span> and a single HTML file
+  </footer>
+
+</div>
+</body>
+</html>
